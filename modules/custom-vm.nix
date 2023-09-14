@@ -288,7 +288,7 @@ in
 
 {
   imports = [
-    ../profiles/qemu-guest.nix
+    ./qemu-guest.nix
     (mkRenamedOptionModule [ "virtualisation" "pathsInNixDB" ] [ "virtualisation" "additionalPaths" ])
     (mkRemovedOptionModule [ "virtualisation" "bootDevice" ] "This option was renamed to `virtualisation.rootDevice`, as it was incorrectly named and misleading. Take the time to review what you want to do and look at the new options like `virtualisation.{bootLoaderDevice, bootPartition}`, open an issue in case of issues.")
     (mkRemovedOptionModule [ "virtualisation" "efiVars" ] "This option was removed, it is possible to provide a template UEFI variable with `virtualisation.efi.variables` ; if this option is important to you, open an issue")
