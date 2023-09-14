@@ -35,6 +35,7 @@
                   isNormalUser = true;
                   initialPassword = "test";
                   group = "testgroup";
+                  extraGroups = [ "wheel" ];
                 };
                 groups.testgroup = { };
               };
@@ -62,6 +63,8 @@
                 driSupport32Bit = true;
               };
 
+              environment.systemPackages = [ pkgs.glxinfo ];
+
               formatConfigs.vm-nvidia = { config, modulesPath, ... }: {
                 imports = [
                   "${toString modulesPath}/virtualisation/qemu-vm.nix"
@@ -86,7 +89,10 @@
 
                 virtualisation.memorySize = 8192;
                 virtualisation.cores = 8;
+                virtualisation.qemu.guestAgent.enable = true;
               };
+
+              services.qemuGuest.enable = true;
 
               # Load nvidia driver for Xorg and Wayland
               services.xserver.videoDrivers = [ "nvidia" ];
@@ -112,7 +118,7 @@
                   ];
                   programs = {
                     home-manager.enable = true;
-
+                    firefox.enable = true;
                     # Nvim Config
                     nixvim = {
                       enable = true;
@@ -184,9 +190,18 @@
                       enable = true;
                       font.name = "NotoMono NF";
                     };
+                    # foot = {
+                    #   enable = true;
+                    #   settings = {
+                    #     main = {
+                    #       font = "NotoMono NF";
+                    #     };
+                    #   };
+                    # };
                   }; # End Programs
                   wayland.windowManager.hyprland = {
                     enable = true;
+                    enableNvidiaPatches = true;
                     extraConfig = ''
                       $mod = SUPER_SHIFT
                       bind = $mod, Q, exec, kitty
