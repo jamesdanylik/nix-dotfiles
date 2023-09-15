@@ -130,6 +130,9 @@
                         nu = true;
                       };
                       extraPackages = [ pkgs.ripgrep ];
+                      extraConfigLua = ''
+                        autocmd BufWritePre <buffer> lua vim.lsp.buf.format()
+                      '';
                       colorschemes.tokyonight.enable = true;
                       plugins = {
                         undotree.enable = true;
@@ -189,6 +192,7 @@
                     kitty = {
                       enable = true;
                       font.name = "NotoMono NF";
+                      extraConfig = (builtins.readFile ./tokyo-night.conf);
                     };
                     # foot = {
                     #   enable = true;

@@ -217,7 +217,7 @@ let
           -smp ${toString config.virtualisation.cores} \
           -device virtio-rng-pci \
           -vga virtio \
-          -display gtk,gl=on,show-cursor=off,zoom-to-fit=on \
+          -display sdl,gl=on,show-cursor=off \
           -chardev socket,path=/tmp/qga.sock,server=on,wait=off,id=qga0 \
           -device virtio-serial \
           -device virtserialport,chardev=qga0,name=org.qemu.guest_agent.0 \
