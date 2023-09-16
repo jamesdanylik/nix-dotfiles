@@ -30,12 +30,15 @@
                 nixos-generators.nixosModules.all-formats
               ];
               nixpkgs.hostPlatform = "x86_64-linux";
+              nixpkgs.config.allowUnfree = true;
+              nixpkgs.config.cudaSupport = true;
               users = {
                 users.test = {
                   isNormalUser = true;
                   initialPassword = "test";
                   group = "testgroup";
                   extraGroups = [ "wheel" ];
+                  shell = pkgs.zsh;
                 };
                 groups.testgroup = { };
               };
@@ -61,9 +64,19 @@
                 enable = true;
                 driSupport = true;
                 driSupport32Bit = true;
+                extraPackages = with pkgs; [
+                  #intel-media-driver # LIBVA_DRIVER_NAME=iHD
+                  #vaapiIntel # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
+                  #vaapiVdpau
+                  #libvdpau-va-gl
+                  nvidia-vaapi-driver
+                  cudatoolkit
+                  cudatoolkit.lib
+                ];
               };
 
-              environment.systemPackages = [ pkgs.glxinfo ];
+              environment.systemPackages = [ pkgs.glxinfo pkgs.libva-utils ];
+              programs.zsh.enable = true;
 
               formatConfigs.vm-nvidia = { config, modulesPath, ... }: {
                 imports = [
@@ -96,6 +109,16 @@
 
               # Load nvidia driver for Xorg and Wayland
               services.xserver.videoDrivers = [ "nvidia" ];
+
+              services.pipewire = {
+                enable = true;
+                audio.enable = true;
+                wireplumber.enable = true;
+                alsa.enable = true;
+                pulse.enable = true;
+                jack.enable = true;
+              };
+
               hardware.nvidia = {
                 modesetting.enable = true;
                 powerManagement.enable = false;
@@ -116,9 +139,37 @@
                     hyprland.homeManagerModules.default
                     nixvim.homeManagerModules.nixvim
                   ];
+                  services = {
+                    plex-mpv-shim.enable = true;
+                    swayidle.enable = true;
+                    swayosd.enable = true;
+                  };
                   programs = {
                     home-manager.enable = true;
                     firefox.enable = true;
+                    wofi = {
+                      enable = true;
+                    };
+                    waybar = {
+                      enable = true;
+                      systemd.enable = true;
+                      settings = {
+                        mainBar = {
+                          layer = "top";
+                          modules-left = [ "wlr/workspaces" "tray" "idle_inhibitor" ];
+                          modules-right = [ "cpu" "temperature" "memory" "clock" ];
+
+                          clock = {
+                            timezone = "America/Los_Angeles";
+                          };
+
+                          tray = {
+                            icon-size = 15;
+                            spacing = 15;
+                          };
+                        };
+                      };
+                    };
                     # Nvim Config
                     nixvim = {
                       enable = true;
@@ -131,9 +182,12 @@
                       };
                       extraPackages = [ pkgs.ripgrep ];
                       extraConfigLua = ''
-                        autocmd BufWritePre <buffer> lua vim.lsp.buf.format()
+                        vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
                       '';
-                      colorschemes.tokyonight.enable = true;
+                      colorschemes.tokyonight = {
+                        enable = true;
+                        style = "night";
+                      };
                       plugins = {
                         undotree.enable = true;
                         treesitter.enable = true;
@@ -148,7 +202,11 @@
                         nvim-cmp = {
                           enable = true;
                           mapping = {
-                            "<CR>" = "cmp.mapping.confirm({ select = true })";
+                            "<C-b>" = "cmp.mapping.scroll_docs(-4)";
+                            "<C-f>" = "cmp.mapping.scroll_docs(4)";
+                            "<C-Space>" = "cmp.mapping.complete()";
+                            "<C-e>" = "cmp.mapping.abort()";
+                            "<Tab>" = "cmp.mapping.confirm({ select = true })";
                           };
                           sources = [
                             { name = "nvim_lsp"; }
@@ -192,7 +250,21 @@
                     kitty = {
                       enable = true;
                       font.name = "NotoMono NF";
-                      extraConfig = (builtins.readFile ./tokyo-night.conf);
+                      extraConfig = (builtins.readFile ./tokyonight_night.conf);
+                      shellIntegration.enableZshIntegration = true;
+                    };
+                    zsh = {
+                      enable = true;
+                      plugins = [{
+                        name = "powerlevel10k";
+                        src = pkgs.zsh-powerlevel10k;
+                        file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
+                      }
+                        {
+                          name = "powerlevel10k-config";
+                          src = ./p10k.zsh;
+                          file = "p10k.zsh";
+                        }];
                     };
                     # foot = {
                     #   enable = true;
@@ -207,8 +279,62 @@
                     enable = true;
                     enableNvidiaPatches = true;
                     extraConfig = ''
+                      general {
+                          border_size = 1
+                          col.active_border = rgba(000000ff)
+                          col.inactive_border = rgba(000000ff)
+                          layout = dwindle
+                      }
+
+                      dwindle {
+                          pseudotile = true
+                          preserve_split = true
+                          no_gaps_when_only = true
+                          force_split = 0
+                      }
+
+                      master {
+                          new_is_master = true
+                      }
+
+                      decoration {
+                          rounding = 8
+                      }
+
                       $mod = SUPER_SHIFT
                       bind = $mod, Q, exec, kitty
+                      bind = $mod, R, exec, wofi --show drun
+
+                      bind = $mod, C, killactive
+                      bind = $mod, M, exit
+                      bind = $mod, V, togglefloating
+                      bind = $mod, F, fakefullscreen
+                      bind = $mod, J, togglesplit
+                      bind = $mod, F, fakefullscreen
+
+                      bindm = $mod, mouse:272, movewindow
+                      bindm = $mod, mouse:273, resizewindow
+
+                      ${builtins.concatStringsSep "\n" (builtins.map (
+                        key: let
+                          letter = builtins.substring 0 1 key;
+                        in ''
+                          bind = $mod, ${key}, movefocus, ${letter}
+                          binde = $mod SHIFT, ${key}, movewindow, ${letter}
+                        '') ["left" "right" "up" "down"] )}
+
+                      ${builtins.concatStringsSep "\n" (builtins.genList (
+                        x: let 
+                          ws = toString (x+1);
+                          key = let 
+                            c = (x + 1) / 10;
+                          in
+                            builtins.toString (x + 1 - (c*10));
+                        in ''
+                          bind = $mod, ${key}, workspace, ${ws}
+                          binde = $mod SHIFT, ${key}, movetoworkspace, ${ws}
+                        ''
+                        ) 10)}
                     '';
                   }; # End Hyprland
                 }; # End Test user Home declaration

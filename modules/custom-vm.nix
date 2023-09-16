@@ -221,6 +221,9 @@ let
           -chardev socket,path=/tmp/qga.sock,server=on,wait=off,id=qga0 \
           -device virtio-serial \
           -device virtserialport,chardev=qga0,name=org.qemu.guest_agent.0 \
+          -audiodev pa,id=pa,server=unix:''${XDG_RUNTIME_DIR}/pulse/native,out.stream-name=foobar,in.stream-name=foobar \
+          -device intel-hda \
+          -device hda-duplex,audiodev=pa,mixer=off \
           ${concatStringsSep " " config.virtualisation.qemu.networkingOptions} \
           ${concatStringsSep " \\\n    "
             (mapAttrsToList
