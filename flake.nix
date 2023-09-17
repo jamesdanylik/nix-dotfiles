@@ -21,379 +21,421 @@
   };
   outputs = { self, nixpkgs, nixos-generators, home-manager, nixvim, hyprland, ... }: {
     nixosConfigurations = {
-      testnixos = nixpkgs.lib.nixosSystem
-        {
-          modules = [
-            ({ config, pkgs, ... }: {
-              system.stateVersion = "23.05";
-              imports = [
-                nixos-generators.nixosModules.all-formats
+      testnixos = nixpkgs.lib.nixosSystem {
+        modules = [
+          ({ config, pkgs, ... }: {
+            system.stateVersion = "23.05";
+            imports = [
+              nixos-generators.nixosModules.all-formats
+            ];
+            nixpkgs.hostPlatform = "x86_64-linux";
+            nixpkgs.config.allowUnfree = true;
+            nixpkgs.config.cudaSupport = true;
+            users = {
+              users.test = {
+                isNormalUser = true;
+                initialPassword = "test";
+                group = "testgroup";
+                extraGroups = [ "wheel" ];
+                shell = pkgs.zsh;
+              };
+              groups.testgroup = { };
+            };
+
+            # doesn't solve the powerline issue
+            # console = {
+            #   font = "NotoMono NF";
+            #   keyMap = "us";
+            # };
+
+            fonts = {
+              packages = with pkgs; [
+                (nerdfonts.override { fonts = [ "Noto" ]; })
               ];
-              nixpkgs.hostPlatform = "x86_64-linux";
-              nixpkgs.config.allowUnfree = true;
-              nixpkgs.config.cudaSupport = true;
-              users = {
-                users.test = {
-                  isNormalUser = true;
-                  initialPassword = "test";
-                  group = "testgroup";
-                  extraGroups = [ "wheel" ];
-                  shell = pkgs.zsh;
-                };
-                groups.testgroup = { };
-              };
-
-              fonts = {
-                packages = with pkgs; [
-                  (nerdfonts.override { fonts = [ "Noto" ]; })
-                ];
-                enableDefaultPackages = true;
-                fontDir.enable = true;
-                fontconfig = {
-                  enable = true;
-                  antialias = true;
-                  defaultFonts = {
-                    monospace = [ "NotoMono NF" ];
-                  };
+              enableDefaultPackages = true;
+              fontDir.enable = true;
+              fontconfig = {
+                enable = true;
+                antialias = true;
+                defaultFonts = {
+                  monospace = [ "NotoMono NF" ];
                 };
               };
+            };
 
-              security.polkit.enable = true;
-              # Enable OpenGL
-              hardware.opengl = {
-                enable = true;
-                driSupport = true;
-                driSupport32Bit = true;
-                extraPackages = with pkgs; [
-                  intel-media-driver # LIBVA_DRIVER_NAME=iHD
-                  vaapiIntel # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
-                  vaapiVdpau
-                  libvdpau-va-gl
-                  nvidia-vaapi-driver
-                  cudatoolkit
-                  cudatoolkit.lib
-                ];
-              };
+            security.polkit.enable = true;
 
-              environment.systemPackages = [ pkgs.glxinfo pkgs.libva-utils pkgs.nfs-utils ];
-              environment.pathsToLink = [ "/share/zsh" ];
-              programs.zsh.enable = true;
+            # Enable OpenGL
+            hardware.opengl = {
+              enable = true;
+              driSupport = true;
+              driSupport32Bit = true;
+              extraPackages = with pkgs; [
+                intel-media-driver # LIBVA_DRIVER_NAME=iHD
+                vaapiIntel # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
+                vaapiVdpau
+                libvdpau-va-gl
+                nvidia-vaapi-driver
+                cudatoolkit
+                cudatoolkit.lib
+              ];
+            };
 
-              formatConfigs.vm-nvidia = { config, modulesPath, ... }: {
+            environment.systemPackages = [
+              pkgs.glxinfo
+              pkgs.libva-utils
+              pkgs.nfs-utils
+              pkgs.remmina
+              pkgs.transmission-remote-gtk
+
+            ];
+
+            environment.pathsToLink = [ "/share/zsh" ];
+
+            programs.zsh.enable = true;
+
+            formatConfigs.vm-nvidia = { config, modulesPath, ... }: {
+              imports = [
+                "${toString modulesPath}/virtualisation/qemu-vm.nix"
+              ];
+              formatAttr = "vm";
+
+              virtualisation.memorySize = 8192;
+              virtualisation.cores = 8;
+              virtualisation.qemu.options = [
+                "-device virtio-vga-gl"
+                "-display sdl,gl=on,show-cursor=off"
+                #"-vga none"
+                #"-device virtio-gpu-pci"
+              ];
+            };
+
+            formatConfigs.vm-custom = { config, modulesPath, ... }: {
+              imports = [
+                ./modules/custom-vm.nix
+              ];
+              formatAttr = "vm";
+
+              virtualisation.memorySize = 8192;
+              virtualisation.cores = 8;
+              virtualisation.qemu.guestAgent.enable = true;
+            };
+
+            services.qemuGuest.enable = true;
+
+            # Load nvidia driver for Xorg and Wayland
+            services.xserver.videoDrivers = [ "nvidia" ];
+
+            services.pipewire = {
+              enable = true;
+              audio.enable = true;
+              wireplumber.enable = true;
+              alsa.enable = true;
+              pulse.enable = true;
+              jack.enable = true;
+            };
+
+            # For NFS
+            boot.supportedFilesystems = [ "nfs" ];
+            services.rpcbind.enable = true;
+
+            hardware.nvidia = {
+              modesetting.enable = true;
+              powerManagement.enable = false;
+              powerManagement.finegrained = false;
+              open = true;
+              nvidiaSettings = true;
+              package = config.boot.kernelPackages.nvidiaPackages.stable;
+            };
+          })
+          home-manager.nixosModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              users.test = { config, pkgs, ... }: {
+                home.stateVersion = "23.05";
                 imports = [
-                  "${toString modulesPath}/virtualisation/qemu-vm.nix"
+                  hyprland.homeManagerModules.default
+                  nixvim.homeManagerModules.nixvim
                 ];
-                formatAttr = "vm";
-
-                virtualisation.memorySize = 8192;
-                virtualisation.cores = 8;
-                virtualisation.qemu.options = [
-                  "-device virtio-vga-gl"
-                  "-display sdl,gl=on,show-cursor=off"
-                  #"-vga none"
-                  #"-device virtio-gpu-pci"
-                ];
-              };
-
-              formatConfigs.vm-custom = { config, modulesPath, ... }: {
-                imports = [
-                  ./modules/custom-vm.nix
-                ];
-                formatAttr = "vm";
-
-                virtualisation.memorySize = 8192;
-                virtualisation.cores = 8;
-                virtualisation.qemu.guestAgent.enable = true;
-              };
-
-              services.qemuGuest.enable = true;
-
-              # Load nvidia driver for Xorg and Wayland
-              services.xserver.videoDrivers = [ "nvidia" ];
-
-              services.pipewire = {
-                enable = true;
-                audio.enable = true;
-                wireplumber.enable = true;
-                alsa.enable = true;
-                pulse.enable = true;
-                jack.enable = true;
-              };
-
-              # For NFS
-              boot.supportedFilesystems = [ "nfs" ];
-              services.rpcbind.enable = true;
-
-              hardware.nvidia = {
-                modesetting.enable = true;
-                powerManagement.enable = false;
-                powerManagement.finegrained = false;
-                open = true;
-                nvidiaSettings = true;
-                package = config.boot.kernelPackages.nvidiaPackages.stable;
-              };
-            })
-            home-manager.nixosModules.home-manager
-            {
-              home-manager = {
-                useGlobalPkgs = true;
-                useUserPackages = true;
-                users.test = { config, pkgs, ... }: {
-                  home.stateVersion = "23.05";
-                  imports = [
-                    hyprland.homeManagerModules.default
-                    nixvim.homeManagerModules.nixvim
-                  ];
-                  services = {
-                    plex-mpv-shim.enable = true;
-                    swayidle.enable = true;
-                    swayosd.enable = true;
+                services = {
+                  plex-mpv-shim.enable = true;
+                  swayidle.enable = true;
+                  swayosd.enable = true;
+                };
+                programs = {
+                  home-manager.enable = true;
+                  firefox.enable = true;
+                  wofi = {
+                    enable = true;
                   };
-                  programs = {
-                    home-manager.enable = true;
-                    firefox.enable = true;
-                    wofi = {
-                      enable = true;
+                  # ls replacement (also see lsd)
+                  eza = {
+                    enable = true;
+                    enableAliases = true;
+                  };
+                  translate-shell = {
+                    enable = true;
+                  };
+                  yt-dlp = {
+                    enable = true;
+                  };
+                  # zoxide - cd with smart jumps
+                  # boxxy - sandboxing for badly behaving linus apps
+                  direnv = {
+                    enable = true;
+                    enableZshIntegration = true;
+                    nix-direnv.enable = true;
+                  };
+                  # document reader, recolor bg's to black
+                  zathura = {
+                    enable = true;
+                    options = {
+                      default-bg = "#000000";
+                      default-fg = "#ffffff";
                     };
-                    # ls replacement (also see lsd)
-                    eza = {
-                      enable = true;
-                      enableAliases = true;
+                  };
+                  # maintained neofetch fork
+                  hyfetch = {
+                    enable = true;
+                  };
+                  # tldr command
+                  tealdeer = {
+                    enable = true;
+                  };
+                  # mcfly for ctrl-r replacement
+                  # bat colorized cat replacement
+                  # command completion, overrides zsh completion
+                  carapace = {
+                    enable = true;
+                    enableZshIntegration = true;
+                  };
+                  btop = {
+                    enable = true;
+                    settings = {
+                      color_theme = "tokyo-night";
                     };
-                    translate-shell = {
-                      enable = true;
-                    };
-                    yt-dlp = {
-                      enable = true;
-                    };
-                    # zoxide - cd with smart jumps
-                    # boxxy - sandboxing for badly behaving linus apps
-                    direnv = {
-                      enable = true;
-                      enableZshIntegration = true;
-                      nix-direnv.enable = true;
-                    };
-                    # document reader, recolor bg's to black
-                    zathura = {
-                      enable = true;
-                      options = {
-                        default-bg = "#000000";
-                        default-fg = "#ffffff";
-                      };
-                    };
-                    # maintained neofetch fork
-                    hyfetch = {
-                      enable = true;
-                    };
-                    # tldr command
-                    tealdeer = {
-                      enable = true;
-                    };
-                    # mcfly for ctrl-r replacement
-                    # bat colorized cat replacement
-                    # command completion, overrides zsh completion
-                    carapace = {
-                      enable = true;
-                      enableZshIntegration = true;
-                    };
-                    btop = {
-                      enable = true;
-                      settings = {
-                        color_theme = "tokyo-night";
-                      };
-                    };
-                    waybar = {
-                      enable = true;
-                      systemd.enable = true;
-                      settings = {
-                        mainBar = {
-                          layer = "top";
-                          modules-left = [ "wlr/workspaces" "tray" "idle_inhibitor" ];
-                          modules-right = [ "cpu" "temperature" "memory" "clock" ];
+                  };
+                  waybar = {
+                    enable = true;
+                    systemd.enable = true;
+                    settings = {
+                      mainBar = {
+                        layer = "top";
+                        modules-left = [ "wlr/workspaces" "tray" "idle_inhibitor" ];
+                        modules-right = [ "cpu" "temperature" "memory" "clock" ];
 
-                          clock = {
-                            timezone = "America/Los_Angeles";
-                          };
+                        clock = {
+                          timezone = "America/Los_Angeles";
+                        };
 
-                          tray = {
-                            icon-size = 15;
-                            spacing = 15;
-                          };
+                        tray = {
+                          icon-size = 15;
+                          spacing = 15;
                         };
                       };
                     };
-                    # Nvim Config
-                    nixvim = {
+                  };
+                  # Nvim Config
+                  nixvim = {
+                    enable = true;
+                    globals = {
+                      mapleader = " ";
+                    };
+                    options = {
+                      relativenumber = true;
+                      nu = true;
+                    };
+                    extraPackages = [ pkgs.ripgrep ];
+                    # maps = {}
+                    extraConfigLua = ''
+                      vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
+                      vim.api.nvim_set_keymap('v', 'f', '<Plug>SnipRun', {silent = true})
+                      vim.api.nvim_set_keymap('n', '<leader>f', '<Plug>SnipRunOperator', {silent = true})
+                      vim.api.nvim_set_keymap('n', '<leader>ff', '<Plug>SnipRun', {silent = true})
+                    '';
+                    colorschemes.tokyonight = {
                       enable = true;
-                      globals = {
-                        mapleader = " ";
-                      };
-                      options = {
-                        relativenumber = true;
-                        nu = true;
-                      };
-                      extraPackages = [ pkgs.ripgrep ];
-                      extraConfigLua = ''
-                        vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
-                      '';
-                      colorschemes.tokyonight = {
+                      style = "night";
+                    };
+                    plugins = {
+                      undotree.enable = true;
+                      treesitter.enable = true;
+                      treesitter-context.enable = true;
+                      ts-autotag.enable = true;
+                      rainbow-delimiters = {
                         enable = true;
-                        style = "night";
+                        strategy = {
+                          default = "global";
+                        };
                       };
-                      plugins = {
-                        undotree.enable = true;
-                        treesitter.enable = true;
-                        telescope = {
-                          enable = true;
-                          keymaps = {
-                            "<leader>pf" = "find_files";
-                            "<leader>ps" = "live_grep";
+                      sniprun = {
+                        enable = true;
+                        interpreterOptions = {
+                          Generic = {
+                            NixConfig = {
+                              supported_filetypes = [ "nix" ];
+                              extension = ".nix";
+                              interpreter = "nix eval --extra-experimental-features nix-command --file";
+                              compiler = "";
+                              boilerplate_pre = "{";
+                              boilerplate_post = "}";
+                            };
                           };
                         };
-                        comment-nvim.enable = true;
-                        nvim-cmp = {
-                          enable = true;
-                          mapping = {
-                            "<C-b>" = "cmp.mapping.scroll_docs(-4)";
-                            "<C-f>" = "cmp.mapping.scroll_docs(4)";
-                            "<C-Space>" = "cmp.mapping.complete()";
-                            "<C-e>" = "cmp.mapping.abort()";
-                            "<Tab>" = "cmp.mapping.confirm({ select = true })";
-                          };
-                          sources = [
-                            { name = "nvim_lsp"; }
-                          ];
+                      };
+                      telescope = {
+                        enable = true;
+                        keymaps = {
+                          "<leader>pf" = "find_files";
+                          "<leader>ps" = "live_grep";
                         };
-                        lsp = {
-                          enable = true;
-                          servers = {
-                            pylsp = {
-                              enable = true;
-                              settings = {
-                                plugins = {
-                                  autopep8.enabled = true;
-                                  mccabe.enabled = true;
-                                  pycodestyle.enabled = true;
-                                  pyflakes.enabled = true;
-                                  black.enabled = true;
-                                  rope.enabled = true;
-                                };
+                      };
+                      comment-nvim.enable = true;
+                      nvim-cmp = {
+                        enable = true;
+                        mapping = {
+                          "<C-b>" = "cmp.mapping.scroll_docs(-4)";
+                          "<C-f>" = "cmp.mapping.scroll_docs(4)";
+                          "<C-Space>" = "cmp.mapping.complete()";
+                          "<C-e>" = "cmp.mapping.abort()";
+                          "<Tab>" = "cmp.mapping.confirm({ select = true })";
+                        };
+                        sources = [
+                          { name = "nvim_lsp"; }
+                        ];
+                      };
+                      lsp = {
+                        enable = true;
+                        servers = {
+                          pylsp = {
+                            enable = true;
+                            settings = {
+                              plugins = {
+                                autopep8.enabled = true;
+                                mccabe.enabled = true;
+                                pycodestyle.enabled = true;
+                                pyflakes.enabled = true;
+                                black.enabled = true;
+                                rope.enabled = true;
                               };
                             };
-                            nil_ls = {
-                              enable = true;
-                            };
-                            lua-ls = {
-                              enable = true;
-                            };
-                            tsserver = {
-                              enable = true;
-                            };
-                            eslint = {
-                              enable = true;
-                            };
-                            vuels = {
-                              enable = true;
-                            };
                           };
-                        }; # End Lsp
-                      }; # End Nvim Plugins
-                    }; # End NixVim
-                    kitty = {
-                      enable = true;
-                      font.name = "NotoMono NF";
-                      extraConfig = (builtins.readFile ./tokyonight_night.conf);
-                      shellIntegration.enableZshIntegration = true;
-                    };
-                    zsh = {
-                      enable = true;
-                      enableVteIntegration = true;
-                      plugins = [
-                        {
-                          name = "powerlevel10k";
-                          src = pkgs.zsh-powerlevel10k;
-                          file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
-                        }
-                        {
-                          name = "fast-syntax-highlighting";
-                          src = pkgs.zsh-fast-syntax-highlighting;
-                          file = "share/zsh/site-functions/fast-syntax-highlighting.plugin.zsh";
-                        }
-                        {
-                          name = "powerlevel10k-config";
-                          src = ./p10k-config;
-                          file = "p10k.zsh";
-                        }
-                      ];
-                    };
-                  }; # End Programs
-                  wayland.windowManager.hyprland = {
+                          nil_ls = {
+                            enable = true;
+                          };
+                          lua-ls = {
+                            enable = true;
+                          };
+                          tsserver = {
+                            enable = true;
+                          };
+                          eslint = {
+                            enable = true;
+                          };
+                          vuels = {
+                            enable = true;
+                          };
+                        };
+                      }; # End Lsp
+                    }; # End Nvim Plugins
+                  }; # End NixVim
+                  kitty = {
                     enable = true;
-                    enableNvidiaPatches = true;
-                    extraConfig = ''
-                      general {
-                          border_size = 1
-                          col.active_border = rgba(000000ff)
-                          col.inactive_border = rgba(000000ff)
-                          layout = dwindle
+                    font.name = "NotoMono NF";
+                    extraConfig = (builtins.readFile ./tokyonight_night.conf);
+                    shellIntegration.enableZshIntegration = true;
+                  };
+                  zsh = {
+                    enable = true;
+                    enableVteIntegration = true;
+                    plugins = [
+                      {
+                        name = "powerlevel10k";
+                        src = pkgs.zsh-powerlevel10k;
+                        file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
                       }
-
-                      dwindle {
-                          pseudotile = true
-                          preserve_split = true
-                          no_gaps_when_only = true
-                          force_split = 0
+                      {
+                        name = "fast-syntax-highlighting";
+                        src = pkgs.zsh-fast-syntax-highlighting;
+                        file = "share/zsh/site-functions/fast-syntax-highlighting.plugin.zsh";
                       }
-
-                      master {
-                          new_is_master = true
+                      {
+                        name = "powerlevel10k-config";
+                        src = ./p10k-config;
+                        file = "p10k.zsh";
                       }
+                    ];
+                  };
+                }; # End Programs
+                wayland.windowManager.hyprland = {
+                  enable = true;
+                  enableNvidiaPatches = true;
+                  extraConfig = ''
+                    general {
+                        border_size = 1
+                        col.active_border = rgba(000000ff)
+                        col.inactive_border = rgba(000000ff)
+                        layout = dwindle
+                    }
 
-                      decoration {
-                          rounding = 8
-                      }
+                    dwindle {
+                        pseudotile = true
+                        preserve_split = true
+                        no_gaps_when_only = true
+                        force_split = 0
+                    }
 
-                      $mod = SUPER_SHIFT
-                      bind = $mod, Q, exec, kitty
-                      bind = $mod, R, exec, wofi --show drun
+                    master {
+                        new_is_master = true
+                    }
 
-                      bind = $mod, C, killactive
-                      bind = $mod, M, exit
-                      bind = $mod, V, togglefloating
-                      bind = $mod, F, fakefullscreen
-                      bind = $mod, J, togglesplit
-                      bind = $mod, F, fakefullscreen
+                    decoration {
+                        rounding = 8
+                    }
 
-                      bindm = $mod, mouse:272, movewindow
-                      bindm = $mod, mouse:273, resizewindow
+                    $mod = SUPER_SHIFT
+                    bind = $mod, Q, exec, kitty
+                    bind = $mod, R, exec, wofi --show drun
 
-                      ${builtins.concatStringsSep "\n" (builtins.map (
-                        key: let
-                          letter = builtins.substring 0 1 key;
-                        in ''
-                          bind = $mod, ${key}, movefocus, ${letter}
-                          binde = $mod SHIFT, ${key}, movewindow, ${letter}
-                        '') ["left" "right" "up" "down"] )}
+                    bind = $mod, C, killactive
+                    bind = $mod, M, exit
+                    bind = $mod, V, togglefloating
+                    bind = $mod, F, fakefullscreen
+                    bind = $mod, J, togglesplit
+                    bind = $mod, F, fakefullscreen
 
-                      ${builtins.concatStringsSep "\n" (builtins.genList (
-                        x: let 
-                          ws = toString (x+1);
-                          key = let 
-                            c = (x + 1) / 10;
-                          in
-                            builtins.toString (x + 1 - (c*10));
-                        in ''
-                          bind = $mod, ${key}, workspace, ${ws}
-                          binde = $mod SHIFT, ${key}, movetoworkspace, ${ws}
-                        ''
-                        ) 10)}
-                    '';
-                  }; # End Hyprland
-                }; # End Test user Home declaration
-              }; # End Home Manager delcation
-            } # End Home Manager module
-          ]; # End modules
-        }; # End test configuration
+                    bindm = $mod, mouse:272, movewindow
+                    bindm = $mod, mouse:273, resizewindow
+
+                    ${builtins.concatStringsSep "\n" (builtins.map (
+                      key: let
+                        letter = builtins.substring 0 1 key;
+                      in ''
+                        bind = $mod, ${key}, movefocus, ${letter}
+                        binde = $mod SHIFT, ${key}, movewindow, ${letter}
+                      '') ["left" "right" "up" "down"] )}
+
+                    ${builtins.concatStringsSep "\n" (builtins.genList (
+                      x: let 
+                        ws = toString (x+1);
+                        key = let 
+                          c = (x + 1) / 10;
+                        in
+                          builtins.toString (x + 1 - (c*10));
+                      in ''
+                        bind = $mod, ${key}, workspace, ${ws}
+                        binde = $mod SHIFT, ${key}, movetoworkspace, ${ws}
+                      ''
+                      ) 10)}
+                  '';
+                }; # End Hyprland
+              }; # End Test user Home declaration
+            }; # End Home Manager delcation
+          } # End Home Manager module
+        ]; # End modules
+      }; # End test configuration
     }; # End NixOS configurations
   }; # End outputs
 }

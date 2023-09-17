@@ -165,6 +165,7 @@ let
 
       # Create a directory for exchanging data with the VM.
       mkdir -p "$TMPDIR/xchg"
+      echo "Using temporary xchg at: $TMPDIR/xchg"
 
       ${lib.optionalString cfg.useHostCerts
       ''
