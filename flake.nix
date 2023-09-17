@@ -65,10 +65,10 @@
                 driSupport = true;
                 driSupport32Bit = true;
                 extraPackages = with pkgs; [
-                  #intel-media-driver # LIBVA_DRIVER_NAME=iHD
-                  #vaapiIntel # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
-                  #vaapiVdpau
-                  #libvdpau-va-gl
+                  intel-media-driver # LIBVA_DRIVER_NAME=iHD
+                  vaapiIntel # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
+                  vaapiVdpau
+                  libvdpau-va-gl
                   nvidia-vaapi-driver
                   cudatoolkit
                   cudatoolkit.lib
@@ -76,6 +76,7 @@
               };
 
               environment.systemPackages = [ pkgs.glxinfo pkgs.libva-utils pkgs.nfs-utils ];
+              environment.pathsToLink = [ "/share/zsh" ];
               programs.zsh.enable = true;
 
               formatConfigs.vm-nvidia = { config, modulesPath, ... }: {
@@ -154,10 +155,7 @@
                     wofi = {
                       enable = true;
                     };
-                    # lsd = {
-                    #   enable = true;
-                    #   enableAliases = true;
-                    # };
+                    # ls replacement (also see lsd)
                     eza = {
                       enable = true;
                       enableAliases = true;
@@ -175,7 +173,7 @@
                       enableZshIntegration = true;
                       nix-direnv.enable = true;
                     };
-                    # document reader
+                    # document reader, recolor bg's to black
                     zathura = {
                       enable = true;
                       options = {
@@ -193,13 +191,16 @@
                     };
                     # mcfly for ctrl-r replacement
                     # bat colorized cat replacement
-                    # command completion
-                    # carapace = {
-                    #   enable = true;
-                    #   enableZshIntegration = true;
-                    # };
+                    # command completion, overrides zsh completion
+                    carapace = {
+                      enable = true;
+                      enableZshIntegration = true;
+                    };
                     btop = {
                       enable = true;
+                      settings = {
+                        color_theme = "tokyo-night";
+                      };
                     };
                     waybar = {
                       enable = true;
@@ -306,6 +307,7 @@
                     };
                     zsh = {
                       enable = true;
+                      enableVteIntegration = true;
                       plugins = [
                         {
                           name = "powerlevel10k";
