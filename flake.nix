@@ -75,7 +75,7 @@
                 ];
               };
 
-              environment.systemPackages = [ pkgs.glxinfo pkgs.libva-utils ];
+              environment.systemPackages = [ pkgs.glxinfo pkgs.libva-utils pkgs.nfs-utils ];
               programs.zsh.enable = true;
 
               formatConfigs.vm-nvidia = { config, modulesPath, ... }: {
@@ -119,6 +119,10 @@
                 jack.enable = true;
               };
 
+              # For NFS
+              boot.supportedFilesystems = [ "nfs" ];
+              services.rpcbind.enable = true;
+
               hardware.nvidia = {
                 modesetting.enable = true;
                 powerManagement.enable = false;
@@ -148,6 +152,53 @@
                     home-manager.enable = true;
                     firefox.enable = true;
                     wofi = {
+                      enable = true;
+                    };
+                    # lsd = {
+                    #   enable = true;
+                    #   enableAliases = true;
+                    # };
+                    eza = {
+                      enable = true;
+                      enableAliases = true;
+                    };
+                    translate-shell = {
+                      enable = true;
+                    };
+                    yt-dlp = {
+                      enable = true;
+                    };
+                    # zoxide - cd with smart jumps
+                    # boxxy - sandboxing for badly behaving linus apps
+                    direnv = {
+                      enable = true;
+                      enableZshIntegration = true;
+                      nix-direnv.enable = true;
+                    };
+                    # document reader
+                    zathura = {
+                      enable = true;
+                      options = {
+                        default-bg = "#000000";
+                        default-fg = "#ffffff";
+                      };
+                    };
+                    # maintained neofetch fork
+                    hyfetch = {
+                      enable = true;
+                    };
+                    # tldr command
+                    tealdeer = {
+                      enable = true;
+                    };
+                    # mcfly for ctrl-r replacement
+                    # bat colorized cat replacement
+                    # command completion
+                    # carapace = {
+                    #   enable = true;
+                    #   enableZshIntegration = true;
+                    # };
+                    btop = {
                       enable = true;
                     };
                     waybar = {
@@ -262,20 +313,17 @@
                           file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
                         }
                         {
+                          name = "fast-syntax-highlighting";
+                          src = pkgs.zsh-fast-syntax-highlighting;
+                          file = "share/zsh/site-functions/fast-syntax-highlighting.plugin.zsh";
+                        }
+                        {
                           name = "powerlevel10k-config";
                           src = ./p10k-config;
                           file = "p10k.zsh";
                         }
                       ];
                     };
-                    # foot = {
-                    #   enable = true;
-                    #   settings = {
-                    #     main = {
-                    #       font = "NotoMono NF";
-                    #     };
-                    #   };
-                    # };
                   }; # End Programs
                   wayland.windowManager.hyprland = {
                     enable = true;
