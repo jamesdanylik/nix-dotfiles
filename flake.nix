@@ -142,10 +142,6 @@
                   home-manager.enable = true;
                   firefox.enable = true;
                   # ls replacement (also see lsd)
-                  eza = {
-                    enable = true;
-                    enableAliases = true;
-                  };
                   translate-shell = {
                     enable = true;
                   };
@@ -154,11 +150,6 @@
                   };
                   # zoxide - cd with smart jumps
                   # boxxy - sandboxing for badly behaving linus apps
-                  direnv = {
-                    enable = true;
-                    enableZshIntegration = true;
-                    nix-direnv.enable = true;
-                  };
                   # document reader, recolor bg's to black
                   zathura = {
                     enable = true;
@@ -167,26 +158,12 @@
                       default-fg = "#ffffff";
                     };
                   };
-                  # maintained neofetch fork
-                  hyfetch = {
-                    enable = true;
-                  };
-                  # tldr command
-                  tealdeer = {
-                    enable = true;
-                  };
                   # mcfly for ctrl-r replacement
                   # bat colorized cat replacement
                   # command completion, overrides zsh completion
                   carapace = {
                     enable = true;
                     enableZshIntegration = true;
-                  };
-                  btop = {
-                    enable = true;
-                    settings = {
-                      color_theme = "tokyo-night";
-                    };
                   };
                 }; # End Programs
               }; # End Test user Home declaration
@@ -226,18 +203,17 @@
                 imports = [
                   nixvim.homeManagerModules.nixvim
                   ./modules/home/neovim
-		  ./modules/home/kitty
+                  ./modules/home/kitty
+                  ./modules/home/eza
+                  ./modules/home/direnv
+                  ./modules/home/hyfetch
+                  ./modules/home/btop
+                  ./modules/home/tealdeer
                 ];
 
                 programs = {
                   home-manager.enable = true;
                   zsh.enable = true;
-
-                  direnv = {
-                    enable = true;
-                    enableZshIntegration = true;
-                    nix-direnv.enable = true;
-                  };
                 };
               };
             };

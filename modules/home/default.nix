@@ -6,5 +6,10 @@
     ./hyprland
     ./waybar
     ./wofi
+    ./eza
+    ./direnv
+    ./hyfetch
+    ./btop
+    ./tealdeer
   ];
 }
