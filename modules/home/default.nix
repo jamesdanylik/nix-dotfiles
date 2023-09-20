@@ -5,5 +5,6 @@
     ./neovim
     ./hyprland
     ./waybar
+    ./wofi
   ];
 }

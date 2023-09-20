@@ -6,6 +6,10 @@
       url = "github:nix-community/nixos-generators";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-darwin = {
+      url = "github:nixos/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -15,11 +19,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     hyprland = {
-      url = "github:hyprwm/Hyprland";
+      url = "github:hyprwm/hyprland";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
-  outputs = { nixpkgs, nixos-generators, home-manager, nixvim, hyprland, ... }: {
+  outputs = { nixpkgs, nixos-generators, nix-darwin, home-manager, nixvim, hyprland, ... }: {
     nixosConfigurations = {
       testnixos = nixpkgs.lib.nixosSystem {
         modules = [
@@ -29,9 +33,11 @@
               nixos-generators.nixosModules.all-formats
               ./modules/system
             ];
+
             nixpkgs.hostPlatform = "x86_64-linux";
             nixpkgs.config.allowUnfree = true;
             nixpkgs.config.cudaSupport = true;
+
             users = {
               users.test = {
                 isNormalUser = true;
@@ -135,9 +141,6 @@
                 programs = {
                   home-manager.enable = true;
                   firefox.enable = true;
-                  wofi = {
-                    enable = true;
-                  };
                   # ls replacement (also see lsd)
                   eza = {
                     enable = true;
@@ -192,5 +195,54 @@
         ]; # End modules
       }; # End test configuration
     }; # End NixOS configurations
+    darwinConfigurations = {
+      "Jamess-MBP" = nix-darwin.lib.darwinSystem {
+        modules = [
+          ({ config, pkgs, ... }: {
+            system.stateVersion = "23.05";
+            nixpkgs.hostPlatform = "aarch64-darwin";
+            nixpkgs.config.allowUnfree = true;
+
+            services.nix-daemon.enable = true;
+
+            system.defaults.dock.autohide = true;
+
+            programs.zsh.enable = true;
+
+            users.users.jamesdanylik = {
+              name = "jamesdanylik";
+              home = "/Users/jamesdanylik";
+            };
+          })
+          home-manager.darwinModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              users.jamesdanylik = { config, pkgs, ... }: {
+                home.stateVersion = "23.05";
+                home.username = "jamesdanylik";
+                home.homeDirectory = "/Users/jamesdanylik";
+                imports = [
+                  nixvim.homeManagerModules.nixvim
+                  ./modules/home/neovim
+                ];
+
+                programs = {
+                  home-manager.enable = true;
+                  zsh.enable = true;
+
+                  direnv = {
+                    enable = true;
+                    enableZshIntegration = true;
+                    nix-direnv.enable = true;
+                  };
+                };
+              };
+            };
+          }
+        ];
+      };
+    };
   }; # End outputs
 }
