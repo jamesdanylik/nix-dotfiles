@@ -199,7 +199,7 @@
       "Jamess-MBP" = nix-darwin.lib.darwinSystem {
         modules = [
           ({ config, pkgs, ... }: {
-            system.stateVersion = "23.05";
+            # system.stateVersion = "23.05";
             nixpkgs.hostPlatform = "aarch64-darwin";
             nixpkgs.config.allowUnfree = true;
 
@@ -226,6 +226,7 @@
                 imports = [
                   nixvim.homeManagerModules.nixvim
                   ./modules/home/neovim
+		  ./modules/home/kitty
                 ];
 
                 programs = {

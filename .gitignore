@@ -2,3 +2,4 @@ result
 test
 working_test
 *.qcow2
+.DS_Store
