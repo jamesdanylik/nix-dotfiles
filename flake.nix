@@ -82,13 +82,13 @@
               ];
             };
 
-            environment.systemPackages = [
-              pkgs.glxinfo
-              pkgs.libva-utils
-              pkgs.nfs-utils
-              pkgs.remmina
-              pkgs.transmission-remote-gtk
-              pkgs.cava
+            environment.systemPackages = with pkgs; [
+              glxinfo
+              libva-utils
+              nfs-utils
+              remmina
+              transmission-remote-gtk
+              cava
               # pkgs.raysession # patchbay
             ];
 
@@ -98,15 +98,6 @@
 
             # Load nvidia driver for Xorg and Wayland
             services.xserver.videoDrivers = [ "nvidia" ];
-
-            services.pipewire = {
-              enable = true;
-              audio.enable = true;
-              wireplumber.enable = true;
-              alsa.enable = true;
-              pulse.enable = true;
-              jack.enable = true;
-            };
 
             # For NFS
             boot.supportedFilesystems = [ "nfs" ];
@@ -140,8 +131,6 @@
                 };
                 programs = {
                   home-manager.enable = true;
-                  firefox.enable = true;
-                  # ls replacement (also see lsd)
                   translate-shell = {
                     enable = true;
                   };

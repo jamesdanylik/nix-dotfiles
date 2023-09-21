@@ -11,5 +11,6 @@
     ./hyfetch
     ./btop
     ./tealdeer
+    ./firefox
   ];
 }

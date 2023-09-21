@@ -8,7 +8,10 @@
       relativenumber = true;
       nu = true;
     };
-    extraPackages = [ pkgs.ripgrep ];
+    extraPackages = [
+      pkgs.ripgrep
+      pkgs.nixpkgs-fmt
+    ];
     # maps = {}
     extraConfigLua = ''
       vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
@@ -85,6 +88,11 @@
           };
           nil_ls = {
             enable = true;
+            settings = {
+              formatting = {
+                command = [ "nixpkgs-fmt" ];
+              };
+            };
           };
           lua-ls = {
             enable = true;
