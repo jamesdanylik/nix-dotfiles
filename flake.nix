@@ -95,6 +95,8 @@
               hyprpicker
             ];
 
+            programs.hyprland.enable = true;
+
             environment.pathsToLink = [ "/share/zsh" ];
 
             programs.zsh.enable = true;
@@ -105,6 +107,18 @@
             # For NFS
             boot.supportedFilesystems = [ "nfs" ];
             services.rpcbind.enable = true;
+
+            services.xserver = {
+              enable = true;
+              displayManager.sddm = {
+                enable = true;
+                settings = {
+                  general = {
+                    DisplayServer = "wayland";
+                  };
+                };
+              };
+            };
 
             hardware.nvidia = {
               modesetting.enable = true;
