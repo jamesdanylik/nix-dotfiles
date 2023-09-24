@@ -18,7 +18,11 @@
       vim.api.nvim_set_keymap('v', 'f', '<Plug>SnipRun', {silent = true})
       vim.api.nvim_set_keymap('n', '<leader>f', '<Plug>SnipRunOperator', {silent = true})
       vim.api.nvim_set_keymap('n', '<leader>ff', '<Plug>SnipRun', {silent = true})
-    '';
+      vim.api.nvim_set_keymap('n', '<leader>ti', "<cmd>lua require'telescope.builtin'.symbols{}<cr>", {noremap = true})
+    ''; # possibly move symbols map to telescope module below
+    extraPlugins = with pkgs.vimPlugins; [
+      telescope-symbols-nvim # possibly switch this to icon-picker.nvim eventually
+    ];
     colorschemes.tokyonight = {
       enable = true;
       style = "night";

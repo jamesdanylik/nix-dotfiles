@@ -28,6 +28,7 @@
       $mod = SUPER_ALT
       bind = $mod, Q, exec, kitty
       bind = $mod, R, exec, wofi --show drun
+      bind = $mod, B, exec, pkill -SIGUSR1 waybar
 
       bind = $mod, C, killactive
       bind = $mod, M, exit

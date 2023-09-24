@@ -22,11 +22,13 @@
       url = "github:hyprwm/hyprland";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nur.url = "github:nix-community/nur";
   };
-  outputs = { nixpkgs, nixos-generators, nix-darwin, home-manager, nixvim, hyprland, ... }: {
+  outputs = { nixpkgs, nixos-generators, nix-darwin, home-manager, nixvim, hyprland, nur, ... }: {
     nixosConfigurations = {
       testnixos = nixpkgs.lib.nixosSystem {
         modules = [
+          { nixpkgs.overlays = [ nur.overlay ]; }
           ({ config, pkgs, ... }: {
             system.stateVersion = "23.05";
             imports = [
@@ -90,6 +92,7 @@
               transmission-remote-gtk
               cava
               # pkgs.raysession # patchbay
+              hyprpicker
             ];
 
             environment.pathsToLink = [ "/share/zsh" ];

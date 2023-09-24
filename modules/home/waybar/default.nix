@@ -11,8 +11,7 @@
       mainBar = {
         layer = "top";
         modules-left = [ "hyprland/workspaces" "tray" "idle_inhibitor" ];
-        modules-right = [ "cava" "wireplumber" "cpu" "temperature" "memory" "disk" "network" "clock" ];
-
+        modules-right = [ "cava" "wireplumber" "cpu" "temperature" "memory" "disk" "battery" "network" "clock" ];
 
         "hyprland/workspaces" = {
           active-only = "true";
@@ -25,7 +24,11 @@
         };
 
         idle_inhibitor = {
-          format = "{status}";
+          format = "{icon}";
+          format-icons = {
+            deactivated = "";
+            activated = "";
+          };
         };
 
         cava = {
@@ -51,42 +54,55 @@
         };
 
         wireplumber = {
-          format = "{volume}%";
-          format-muted = "MUTE";
-          scroll-step = 0.2;
+          format = "{icon} {volume}%";
+          format-muted = "󰝟";
+          scroll-step = 1;
+          format-icons = [ "󰕿" "󰖀" "󰕾" ];
+          on-click = "/run/current-system/sw/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
+        };
+
+        battery = {
+          format = "{icon} {capacity}%";
+          format-icons = [ "󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹" ];
         };
 
         cpu = {
-          format = "{usage}%";
+          format = "󰒓 {usage}%";
           interval = 10;
         };
 
         temperature = {
-          format = "{temperatureC}°C";
-
+          format = "󰔏 {temperatureC}󰔄";
         };
 
         memory = {
-          format = "{percentage}%";
+          format = "󰍛 {percentage}%";
           interval = 30;
         };
 
         disk = {
           interval = 30;
-          format = "{percentage_free}%";
+          format = "󰆼 {percentage_free}%";
           path = "/";
         };
 
         network = {
           interval = 60;
           family = "ipv4";
-          format = "{ifname}: {ipaddr}";
+          format-disconnected = "󰲛";
+          format-ethernet = "󰈀 {ipaddr}/{cidr}";
+          format-wifi = "{icon} {essid} ({signalStrength}%)";
+          format-icons = [ "󰤟" "󰤢" "󰤥" "󰤨" ];
         };
 
         clock = {
-          timezone = "America/Los_Angeles";
+          timezones = [ "America/Los_Angeles" "Etc/UTC" "Asia/Tokyo" ];
+          format = "󰥔 {:%e %a %H:%M %Z}";
+          actions = {
+            on-scroll-up = "tz_up";
+            on-scroll-down = "tz_down";
+          };
         };
-
       };
     };
   };
