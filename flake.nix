@@ -143,7 +143,6 @@
                 ];
                 services = {
                   plex-mpv-shim.enable = true;
-                  swayidle.enable = true;
                   swayosd.enable = true;
                 };
                 programs = {
