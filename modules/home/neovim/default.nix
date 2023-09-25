@@ -11,6 +11,7 @@
     extraPackages = [
       pkgs.ripgrep
       pkgs.nixpkgs-fmt
+      pkgs.code-minimap
     ];
     # maps = {}
     extraConfigLua = ''
@@ -19,9 +20,11 @@
       vim.api.nvim_set_keymap('n', '<leader>f', '<Plug>SnipRunOperator', {silent = true})
       vim.api.nvim_set_keymap('n', '<leader>ff', '<Plug>SnipRun', {silent = true})
       vim.api.nvim_set_keymap('n', '<leader>ti', "<cmd>lua require'telescope.builtin'.symbols{}<cr>", {noremap = true})
+      vim.api.nvim_set_keymap('n', '<leader>mm', "<cmd>MinimapToggle<cr>", {})
     ''; # possibly move symbols map to telescope module below
     extraPlugins = with pkgs.vimPlugins; [
       telescope-symbols-nvim # possibly switch this to icon-picker.nvim eventually
+      minimap-vim
     ];
     colorschemes.tokyonight = {
       enable = true;

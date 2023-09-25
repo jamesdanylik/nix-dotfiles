@@ -1,4 +1,4 @@
-{ ... }: {
+{ pkgs, ... }: {
   programs.waybar = {
     enable = true;
     systemd = {
@@ -14,11 +14,18 @@
       mainBar = {
         layer = "top";
         modules-left = [ "hyprland/workspaces" "tray" "idle_inhibitor" ];
-        modules-right = [ "cava" "wireplumber" "cpu" "temperature" "memory" "disk" "battery" "network" "clock" ];
+        modules-right = [ "cava" "wireplumber" "cpu" "temperature" "memory" "disk" "battery" "network" "clock" "custom/poweroff" ];
 
         "hyprland/workspaces" = {
           active-only = "true";
           format = "{name}";
+        };
+
+        "custom/poweroff" = {
+          format = "{icon}";
+          format-icons = [ "󰐥" ];
+          on-click = "${pkgs.nwg-bar}/bin/nwg-bar";
+          exec-on-event = false;
         };
 
         tray = {
