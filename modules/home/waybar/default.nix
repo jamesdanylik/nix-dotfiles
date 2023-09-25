@@ -1,7 +1,10 @@
 { ... }: {
   programs.waybar = {
     enable = true;
-    systemd.enable = true;
+    systemd = {
+      enable = true;
+      target = "hyprland-session.target";
+    };
     style = ''
       * {
         font-family: NotoMono NF;
@@ -47,6 +50,7 @@
           waves = false;
           noise_reduction = 0.77;
           input_delay = 2;
+          sleep_timer = 5;
           format-icons = [ "▁" "▂" "▃" "▄" "▅" "▆" "▇" "█" ];
           actions = {
             on-click-right = "mode";

@@ -30,6 +30,13 @@
       bind = $mod, R, exec, wofi --show drun
       bind = $mod, B, exec, pkill -SIGUSR1 waybar
 
+      binde = , XF86AudioRaiseVolume, exec, swayosd --output-volume raise
+      binde = , XF86AudioLowerVolume, exec, swayosd --output-volume lower
+      bind = , XF86AudioMute, exec, swayosd --output-volume mute-toggle
+      bindr = CAPS, Caps_Lock, exec, swayosd --caps-lock
+      binde = , XF86MonBrightnessUp, exec, swayosd --brightness raise
+      binde = , XF86MonBrightnessDown, exec, swayosd --brightness lower
+
       bind = $mod, C, killactive
       bind = $mod, M, exit
       bind = $mod, V, togglefloating

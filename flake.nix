@@ -93,6 +93,7 @@
               cava
               # pkgs.raysession # patchbay
               hyprpicker
+              weston
             ];
 
             programs.hyprland.enable = true;
@@ -113,9 +114,11 @@
               displayManager.sddm = {
                 enable = true;
                 settings = {
-                  general = {
+                  General = {
                     DisplayServer = "wayland";
+                    InputMethod = "";
                   };
+                  Wayland.CompositorCommand = "${pkgs.weston}/bin/weston --shell=fullscreen-shell.so";
                 };
               };
             };
