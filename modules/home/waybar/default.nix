@@ -50,7 +50,7 @@
           waves = false;
           noise_reduction = 0.77;
           input_delay = 2;
-          sleep_timer = 5;
+          sleep_timer = 5; # need this to prevent cava from sleeping instantly on silence
           format-icons = [ "▁" "▂" "▃" "▄" "▅" "▆" "▇" "█" ];
           actions = {
             on-click-right = "mode";
