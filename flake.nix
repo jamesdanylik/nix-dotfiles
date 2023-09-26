@@ -147,8 +147,9 @@
                 services = {
                   plex-mpv-shim.enable = true;
                   swayosd.enable = true;
+                  playerctld.enable = true; # for mpris in waybar
                 };
-                home.packages = [ pkgs.nwg-bar ];
+                home.packages = [ pkgs.nwg-bar pkgs.playerctl pkgs.wev ];
                 xdg.configFile."nwg-bar/bar.json".text = ''
                   [
                    {

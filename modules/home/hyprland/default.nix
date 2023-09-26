@@ -1,4 +1,4 @@
-{ ... }: {
+{ pkgs, ... }: {
   wayland.windowManager.hyprland = {
     enable = true;
     enableNvidiaPatches = true;
@@ -36,7 +36,10 @@
       bindr = CAPS, Caps_Lock, exec, swayosd --caps-lock
       binde = , XF86MonBrightnessUp, exec, swayosd --brightness raise
       binde = , XF86MonBrightnessDown, exec, swayosd --brightness lower
-
+      bind = , XF86AudioPlay, exec, ${pkgs.playerctl}/bin/playerctl play-pause
+      bind = , XF86AudioNext, exec, ${pkgs.playerctl}/bin/playerctl next
+      bind = , XF86AudioPrev, exec, ${pkgs.playerctl}/bin/playerctl previous
+      bind = $mod, T, exec, ${pkgs.playerctl}/bin/playerctl play-pause
       bind = $mod, C, killactive
       bind = $mod, M, exit
       bind = $mod, V, togglefloating

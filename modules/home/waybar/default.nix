@@ -13,8 +13,8 @@
     settings = {
       mainBar = {
         layer = "top";
-        modules-left = [ "hyprland/workspaces" "tray" "idle_inhibitor" ];
-        modules-right = [ "cava" "wireplumber" "cpu" "temperature" "memory" "disk" "battery" "network" "clock" "custom/poweroff" ];
+        modules-left = [ "idle_inhibitor" "hyprland/workspaces" "wireplumber" "cava" "mpris" ];
+        modules-right = [ "tray" "cpu" "temperature" "memory" "disk" "battery" "network" "clock" "custom/poweroff" ];
 
         "hyprland/workspaces" = {
           active-only = "true";
@@ -31,6 +31,19 @@
         tray = {
           icon-size = 15;
           spacing = 15;
+        };
+
+        mpris = {
+          format = "{status_icon} {player_icon} {dynamic}";
+          player-icons = {
+            firefox = "";
+            default = "󰓃";
+          };
+          status-icons = {
+            paused = "󰏤";
+            playing = "󰐊";
+            stopped = "󰓛";
+          };
         };
 
         idle_inhibitor = {
