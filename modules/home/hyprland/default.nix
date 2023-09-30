@@ -27,7 +27,7 @@
 
       $mod = SUPER_ALT
       bind = $mod, Q, exec, kitty
-      bind = $mod, R, exec, wofi --show drun
+      bind = $mod, R, exec, wofi --show drun -a
       bind = $mod, B, exec, pkill -SIGUSR1 waybar
 
       binde = , XF86AudioRaiseVolume, exec, swayosd --output-volume raise

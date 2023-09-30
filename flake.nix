@@ -139,6 +139,14 @@
               useUserPackages = true;
               users.test = { config, pkgs, ... }: {
                 home.stateVersion = "23.05";
+                home.sessionVariables = {
+                  EDITOR = "nvim";
+                  BROWSER = "firefox";
+                  TERMINAL = "kitty";
+                };
+                # home.shellAliases = {
+                #   xterm = "kitty";
+                # };
                 imports = [
                   hyprland.homeManagerModules.default
                   nixvim.homeManagerModules.nixvim

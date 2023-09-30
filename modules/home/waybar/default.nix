@@ -9,6 +9,18 @@
       * {
         font-family: NotoMono NF;
       }
+
+      window#waybar {
+        background: rgba(0, 0, 0, 0.0);
+      }
+
+      #idle_inhibitor, #custom-poweroff, #clock, #network, #cpu, #disk, #memory, #cava {
+        padding: 0 5px;
+      }
+
+      #idle_inhibitor.activated {
+        color: red;
+      }
     '';
     settings = {
       mainBar = {
@@ -34,7 +46,7 @@
         };
 
         mpris = {
-          format = "{status_icon} {player_icon} {dynamic}";
+          format = "{player_icon} {status_icon} {dynamic}";
           player-icons = {
             firefox = "";
             default = "󰓃";
