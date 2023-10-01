@@ -13,5 +13,6 @@
     ./tealdeer
     ./firefox
     ./swayidle
+    ./nwg-bar
   ];
 }
