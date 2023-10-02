@@ -48,6 +48,25 @@
           }
         ];
       };
+      testlaptop = nixpkgs.lib.nixosSystem {
+        modules = [
+          { nixpkgs.overlays = [ nur.overlay ]; }
+          disko.nixosModules.disko
+          ./hosts/testlaptop/disk-config.nix
+          ./hosts/testlaptop/configuration.nix
+          home-manager.nixosModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              users.test = import ./hosts/testlaptop/home.nix;
+              extraSpecialArgs = {
+                inherit inputs;
+              };
+            };
+          }
+        ];
+      };
     };
     darwinConfigurations = {
       "Jamess-MBP" = nix-darwin.lib.darwinSystem {
