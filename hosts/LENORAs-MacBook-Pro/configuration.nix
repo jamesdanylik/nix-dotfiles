@@ -9,8 +9,8 @@
 
   programs.zsh.enable = true;
 
-  users.users.jamesdanylik = {
-    name = "jamesdanylik";
-    home = "/Users/jamesdanylik";
+  users.users.lenoracaldera = {
+    name = "lenoracaldera";
+    home = "/Users/lenoracaldera";
   };
 }

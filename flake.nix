@@ -85,6 +85,38 @@
           }
         ];
       };
+      "Edwards-MacBook-Pro" = nix-darwin.lib.darwinSystem {
+        modules = [
+          ./hosts/Edwards-MacBook-Pro/configuration.nix
+          home-manager.darwinModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              users.jamesdanylik = import ./hosts/Edwards-MacBook-Pro/home.nix;
+              extraSpecialArgs = {
+                inherit inputs;
+              };
+            };
+          }
+        ];
+      };
+      "LENORAs-MacBook-Pro" = nix-darwin.lib.darwinSystem {
+        modules = [
+          ./hosts/LENORAs-MacBook-Pro/configuration.nix
+          home-manager.darwinModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              users.jamesdanylik = import ./hosts/LENORAs-MacBook-Pro/home.nix;
+              extraSpecialArgs = {
+                inherit inputs;
+              };
+            };
+          }
+        ];
+      };
     };
   };
 }

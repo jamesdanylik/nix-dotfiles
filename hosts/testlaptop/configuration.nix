@@ -9,6 +9,23 @@
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.cudaSupport = true;
 
+  boot = {
+    supportedFilesystems = [ "zfs" "nfs" ];
+    loader = {
+      efi = {
+        canTouchEfiVariables = true;
+      };
+      generationsDir.copyKernels = true;
+      grub = {
+        enable = true;
+        devices = "/dev/nvme0n1";
+        copyKernels = true;
+        efiSupport = true;
+        zfsSupport = true;
+      };
+    };
+  };
+
   users = {
     users.test = {
       isNormalUser = true;
@@ -75,7 +92,6 @@
   services.xserver.videoDrivers = [ "nvidia" ];
 
   # For NFS
-  boot.supportedFilesystems = [ "nfs" ];
   services.rpcbind.enable = true;
 
   services.xserver = {

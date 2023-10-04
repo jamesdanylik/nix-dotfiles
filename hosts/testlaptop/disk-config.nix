@@ -28,24 +28,42 @@
     zpool = {
       zroot = {
         type = "zpool";
-        rootFsOptions = { };
+        options = {
+          ashift = "12";
+          autotrim = "on";
+        };
+        rootFsOptions = {
+          acltype = "posixacl";
+          xattr = "sa";
+          relatime = "on";
+          compression = "lz4";
+          dnodesize = "auto";
+          normalization = "formD";
+          mountpoint = "none";
+          canmount = "off";
+          devices = "off";
+        };
         datasets = {
           "local/root" = {
             type = "zfs_fs";
             mountpoint = "/";
+            options.mountpoint = "legacy";
             postCreateHook = "zfs snapshot zroot/local/root@blank";
           };
           "local/nix" = {
             type = "zfs_fs";
             mountpoint = "/nix";
+            options.mountpoint = "legacy";
           };
           "safe/home" = {
             type = "zfs_fs";
             mountpoint = "/home";
+            options.mountpoint = "legacy";
           };
           "safe/persist" = {
             type = "zfs_fs";
             mountpoint = "/persist";
+            options.mountpoint = "legacy";
           };
         };
       };
