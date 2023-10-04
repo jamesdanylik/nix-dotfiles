@@ -18,7 +18,7 @@
       generationsDir.copyKernels = true;
       grub = {
         enable = true;
-        devices = "/dev/nvme0n1";
+        devices = [ "/dev/nvme0n1" ];
         copyKernels = true;
         efiSupport = true;
         zfsSupport = true;
