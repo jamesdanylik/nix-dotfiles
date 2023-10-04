@@ -22,6 +22,7 @@
       grub = {
         enable = true;
         devices = [ "/dev/nvme0n1" ];
+        efiInstallAsRemovable = true;
         copyKernels = true;
         efiSupport = true;
         zfsSupport = true;
