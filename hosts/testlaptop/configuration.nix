@@ -21,8 +21,8 @@
       generationsDir.copyKernels = true;
       grub = {
         enable = true;
-        devices = [ "/dev/nvme0n1" ];
-        efiInstallAsRemovable = true;
+        devices = [ "nodev" ];
+        #efiInstallAsRemovable = true;
         copyKernels = true;
         efiSupport = true;
         zfsSupport = true;
