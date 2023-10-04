@@ -68,8 +68,8 @@
       vaapiVdpau
       libvdpau-va-gl
       nvidia-vaapi-driver
-      cudatoolkit
-      cudatoolkit.lib
+      # cudatoolkit
+      # cudatoolkit.lib
     ];
   };
 
