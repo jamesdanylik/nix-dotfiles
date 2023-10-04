@@ -9,6 +9,8 @@
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.cudaSupport = true;
 
+  networking.hostId = "41fe9545";
+
   boot = {
     supportedFilesystems = [ "zfs" "nfs" ];
     loader = {
