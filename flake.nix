@@ -51,6 +51,7 @@
       testlaptop = nixpkgs.lib.nixosSystem {
         modules = [
           { nixpkgs.overlays = [ nur.overlay ]; }
+          nixos-generators.nixosModules.all-formats
           disko.nixosModules.disko
           ./hosts/testlaptop/disk-config.nix
           ./hosts/testlaptop/configuration.nix
