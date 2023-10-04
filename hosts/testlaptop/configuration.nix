@@ -3,6 +3,7 @@
   system.stateVersion = "23.05";
   imports = [
     ../../modules/system
+    ./hardware-configuration.nix
   ];
 
   nixpkgs.hostPlatform = "x86_64-linux";
@@ -16,6 +17,7 @@
     loader = {
       efi = {
         canTouchEfiVariables = true;
+        efiSysMountPoint = true;
       };
       generationsDir.copyKernels = true;
       grub = {
