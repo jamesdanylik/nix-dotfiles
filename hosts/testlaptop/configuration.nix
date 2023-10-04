@@ -17,7 +17,6 @@
     loader = {
       efi = {
         canTouchEfiVariables = true;
-        efiSysMountPoint = true;
       };
       generationsDir.copyKernels = true;
       grub = {
