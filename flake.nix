@@ -70,15 +70,15 @@
       };
     };
     darwinConfigurations = {
-      "Jamess-MBP" = nix-darwin.lib.darwinSystem {
+      "Jamess-MacBook-Pro" = nix-darwin.lib.darwinSystem {
         modules = [
-          ./hosts/Jamess-MBP/configuration.nix
+          ./hosts/Jamess-MacBook-Pro/configuration.nix
           home-manager.darwinModules.home-manager
           {
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
-              users.jamesdanylik = import ./hosts/Jamess-MBP/home.nix;
+              users.jamesdanylik = import ./hosts/Jamess-MacBook-Pro/home.nix;
               extraSpecialArgs = {
                 inherit inputs;
               };
