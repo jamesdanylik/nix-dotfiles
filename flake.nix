@@ -94,7 +94,7 @@
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
-              users.jamesdanylik = import ./hosts/Edwards-MacBook-Pro/home.nix;
+              users.edwardwilson = import ./hosts/Edwards-MacBook-Pro/home.nix;
               extraSpecialArgs = {
                 inherit inputs;
               };
@@ -110,7 +110,7 @@
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
-              users.jamesdanylik = import ./hosts/LENORAs-MacBook-Pro/home.nix;
+              users.lenoracaldera = import ./hosts/LENORAs-MacBook-Pro/home.nix;
               extraSpecialArgs = {
                 inherit inputs;
               };
