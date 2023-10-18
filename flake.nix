@@ -118,6 +118,22 @@
           }
         ];
       };
+      "Erics-MacBook-Pro" = nix-darwin.lib.darwinSystem {
+        modules = [
+          ./hosts/Erics-MacBook-Pro/configuration.nix
+          home-manager.darwinModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              users.lenoracaldera = import ./hosts/Erics-MacBook-Pro/home.nix;
+              extraSpecialArgs = {
+                inherit inputs;
+              };
+            };
+          }
+        ];
+      };
     };
   };
 }
