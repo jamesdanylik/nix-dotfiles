@@ -126,7 +126,7 @@
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
-              users.lenoracaldera = import ./hosts/Erics-MacBook-Pro/home.nix;
+              users.ericngo = import ./hosts/Erics-MacBook-Pro/home.nix;
               extraSpecialArgs = {
                 inherit inputs;
               };
