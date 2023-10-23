@@ -11,6 +11,7 @@
     ../../modules/home/hyfetch
     ../../modules/home/btop
     ../../modules/home/tealdeer
+    ../../modules/home/vscode
   ];
 
   programs = {
