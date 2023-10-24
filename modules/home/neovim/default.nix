@@ -35,6 +35,7 @@
       treesitter.enable = true;
       treesitter-context.enable = true;
       ts-autotag.enable = true;
+      copilot-lua.enable = true;
       rainbow-delimiters = {
         enable = true;
         strategy = {
