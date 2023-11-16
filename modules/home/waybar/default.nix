@@ -14,7 +14,7 @@
         background: rgba(0, 0, 0, 0.0);
       }
 
-      #idle_inhibitor, #custom-poweroff, #clock, #network, #cpu, #disk, #memory, #cava {
+      #idle_inhibitor, #custom-poweroff, #custom-notification, #clock, #network, #cpu, #disk, #memory, #cava {
         padding: 0 5px;
       }
 
