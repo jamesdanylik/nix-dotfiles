@@ -101,6 +101,7 @@
     weston
     lshw
     brightnessctl
+    swaynotificationcenter
   ];
 
   programs.hyprland.enable = true;

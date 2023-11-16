@@ -133,16 +133,16 @@
                 command = [ "nixpkgs-fmt" ];
               };
             };
-            extraSettings = {
-              nil = {
-                nix = {
-                  flake = {
-                    autoArchive = true;
-                    autoEvalInputs = true;
-                  };
-                };
-              };
-            };
+            # extraSettings = {
+            #   nil = {
+            #     nix = {
+            #       flake = {
+            #         autoArchive = true;
+            #         autoEvalInputs = true;
+            #       };
+            #     };
+            #   };
+            # };
           };
           lua-ls = {
             enable = true;

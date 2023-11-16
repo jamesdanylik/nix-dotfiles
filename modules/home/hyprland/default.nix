@@ -25,6 +25,9 @@
           rounding = 8
       }
 
+      exec-once = swaync
+      exec-once = blueman-applet
+
       $mod = SUPER
       bind = $mod, Q, exec, kitty
       bind = $mod, R, exec, wofi --show drun -a

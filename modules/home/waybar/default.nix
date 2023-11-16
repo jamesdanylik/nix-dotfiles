@@ -26,7 +26,7 @@
       mainBar = {
         layer = "top";
         modules-left = [ "idle_inhibitor" "hyprland/workspaces" "wireplumber" "cava" "mpris" ];
-        modules-right = [ "tray" "cpu" "temperature" "memory" "disk" "battery" "network" "clock" "custom/poweroff" ];
+        modules-right = [ "tray" "cpu" "temperature" "memory" "disk" "battery" "network" "custom/notification" "clock" "custom/poweroff" ];
 
         "hyprland/workspaces" = {
           active-only = "true";
@@ -129,6 +129,27 @@
           format-ethernet = "󰈀 {ipaddr}/{cidr}";
           format-wifi = "{icon} {essid} ({signalStrength}%)";
           format-icons = [ "󰤟" "󰤢" "󰤥" "󰤨" ];
+        };
+
+        "custom/notification" = {
+          tooltip = false;
+          format = "{icon}";
+          format-icons = {
+            notification = "<span foreground='red'><sup></sup></span>";
+            none = "";
+            dnd-notification = "<span foreground='red'><sup></sup></span>";
+            dnd-none = "";
+            inhibited-notification = "<span foreground='red'><sup></sup></span>";
+            inhibited-none = "";
+            dnd-inhibited-notification = "<span foreground='red'><sup></sup></span>";
+            dnd-inhibited-none = "";
+          };
+          return-type = "json";
+          exec-if = "which ${pkgs.swaynotificationcenter}/bin/swaync-client";
+          exec = "${pkgs.coreutils-full}/bin/sleep 0.1 && ${pkgs.swaynotificationcenter}/bin/swaync-client -swb";
+          on-click = "${pkgs.coreutils-full}/bin/sleep 0.1 && ${pkgs.swaynotificationcenter}/bin/swaync-client -t -sw";
+          on-click-right = "${pkgs.coreutils-full}/bin/sleep 0.1 && ${pkgs.swaynotificationcenter}/bin/swaync-client -d -sw";
+          escape = true;
         };
 
         clock = {
