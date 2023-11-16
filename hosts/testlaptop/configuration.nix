@@ -10,8 +10,19 @@
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.cudaSupport = true;
 
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
+  hardware.bluetooth.enable = true;
+  services.blueman.enable = true;
+
+  services.automatic-timezoned.enable = true;
+
   networking = {
-    wireless.enable = true;
+    networkmanager.enable = true;
+    # wireless = {
+    #   enable = true;
+    #   userControlled.enable = true;
+    # };
     hostId = "41fe9545";
   };
 
@@ -38,7 +49,7 @@
       isNormalUser = true;
       initialPassword = "test";
       group = "testgroup";
-      extraGroups = [ "wheel" ];
+      extraGroups = [ "wheel" "networkmanager" ];
       shell = pkgs.zsh;
     };
     groups.testgroup = { };
@@ -47,6 +58,7 @@
   fonts = {
     packages = with pkgs; [
       (nerdfonts.override { fonts = [ "Noto" ]; })
+      twemoji-color-font # for monochrome emjoi fallbacks
     ];
     enableDefaultPackages = true;
     fontDir.enable = true;
@@ -87,6 +99,8 @@
     # pkgs.raysession # patchbay
     hyprpicker
     weston
+    lshw
+    brightnessctl
   ];
 
   programs.hyprland.enable = true;
@@ -115,12 +129,15 @@
     };
   };
 
+  # powersaving 
+  services.tlp.enable = true;
+
   hardware.nvidia = {
     modesetting.enable = true;
     powerManagement.enable = false;
     powerManagement.finegrained = false;
-    open = true;
+    open = false;
     nvidiaSettings = true;
-    #package = config.boot.kernelPackages.nvidiaPackages.stable;
+    package = config.boot.kernelPackages.nvidiaPackages.stable;
   };
 }

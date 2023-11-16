@@ -25,7 +25,7 @@
           rounding = 8
       }
 
-      $mod = SUPER_ALT
+      $mod = SUPER
       bind = $mod, Q, exec, kitty
       bind = $mod, R, exec, wofi --show drun -a
       bind = $mod, B, exec, pkill -SIGUSR1 waybar
@@ -34,8 +34,10 @@
       binde = , XF86AudioLowerVolume, exec, swayosd --output-volume lower
       bind = , XF86AudioMute, exec, swayosd --output-volume mute-toggle
       bindr = CAPS, Caps_Lock, exec, swayosd --caps-lock
-      binde = , XF86MonBrightnessUp, exec, swayosd --brightness raise
-      binde = , XF86MonBrightnessDown, exec, swayosd --brightness lower
+      #binde = , XF86MonBrightnessUp, exec, swayosd --brightness raise
+      binde = , XF86MonBrightnessUp, exec, brightnessctl set 5%+
+      #binde = , XF86MonBrightnessDown, exec, swayosd --brightness lower
+      binde = , XF86MonBrightnessDown, exec, brightnessctl set 5%-
       bind = , XF86AudioPlay, exec, ${pkgs.playerctl}/bin/playerctl play-pause
       bind = , XF86AudioNext, exec, ${pkgs.playerctl}/bin/playerctl next
       bind = , XF86AudioPrev, exec, ${pkgs.playerctl}/bin/playerctl previous
@@ -45,7 +47,6 @@
       bind = $mod, V, togglefloating
       bind = $mod, F, fakefullscreen
       bind = $mod, J, togglesplit
-      bind = $mod, F, fakefullscreen
 
       bindm = $mod, mouse:272, movewindow
       bindm = $mod, mouse:273, resizewindow

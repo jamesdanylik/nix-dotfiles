@@ -3,6 +3,10 @@
     enable = true;
     globals = {
       mapleader = " ";
+      # for minimap.vim
+      minimap_block_filetypes = [ "fugitive" "nerdtree" "tagbar" "fzf" "nvim-tree" "NvimTree" ];
+      minimap_block_buftypes = [ "nofile" "nowrite" "quickfix" "terminal" "prompt" "NvimTree" ];
+      minimap_close_filetypes = [ "startify" "netrw" "vim-plug" ];
     };
     options = {
       relativenumber = true;
@@ -13,18 +17,39 @@
       pkgs.nixpkgs-fmt
       pkgs.code-minimap
     ];
-    # maps = {}
+    autoCmd = [
+      {
+        event = "BufWritePre";
+        pattern = [ "*.py" "*.nix" ];
+        callback = { __raw = "function() vim.lsp.buf.format() end"; };
+      }
+    ];
+    # keymaps = [
+    #   {
+    #     mode = "n";
+    #     key = "<leader>pt";
+    #     action = "<cmd>NvimTreeToggle<cr>";
+    #     desc = "Toggle the visibility of the file tree in the left sidebar.";
+    #   }
+    #   {
+    #     mode = "n";
+    #     key = "<leader>mm";
+    #     action = "<cmd>MinimapToggle<cr>";
+    #     desc = "Toggle the visibility of the file minimap in the right sidebar.";
+    #   }
+    # ];
     extraConfigLua = ''
-      vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
       vim.api.nvim_set_keymap('v', 'f', '<Plug>SnipRun', {silent = true})
       vim.api.nvim_set_keymap('n', '<leader>f', '<Plug>SnipRunOperator', {silent = true})
       vim.api.nvim_set_keymap('n', '<leader>ff', '<Plug>SnipRun', {silent = true})
-      vim.api.nvim_set_keymap('n', '<leader>ti', "<cmd>lua require'telescope.builtin'.symbols{}<cr>", {noremap = true})
       vim.api.nvim_set_keymap('n', '<leader>mm', "<cmd>MinimapToggle<cr>", {})
-    ''; # possibly move symbols map to telescope module below
+      vim.api.nvim_set_keymap('n', '<leader>pt', '<cmd>NvimTreeToggle<cr>', {})
+      -- require('aerial').setup({})
+    '';
     extraPlugins = with pkgs.vimPlugins; [
       telescope-symbols-nvim # possibly switch this to icon-picker.nvim eventually
       minimap-vim
+      #aerial-nvim
     ];
     colorschemes.tokyonight = {
       enable = true;
@@ -36,6 +61,10 @@
       treesitter-context.enable = true;
       ts-autotag.enable = true;
       copilot-lua.enable = true;
+      nvim-tree = {
+        enable = true;
+        updateFocusedFile.enable = true;
+      };
       rainbow-delimiters = {
         enable = true;
         strategy = {
@@ -62,6 +91,9 @@
         keymaps = {
           "<leader>pf" = "find_files";
           "<leader>ps" = "live_grep";
+          "<leader>jd" = "lsp_definitions";
+          "<leader>tt" = "builtin";
+          "<leader>ti" = "symbols";
         };
       };
       comment-nvim.enable = true;

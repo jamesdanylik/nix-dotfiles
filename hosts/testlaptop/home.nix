@@ -28,6 +28,16 @@
     yt-dlp = {
       enable = true;
     };
+    mpv = {
+      enable = true;
+      scripts = with pkgs.mpvScripts; [
+        mpris
+        uosc
+      ];
+    };
+    git = {
+      enable = true;
+    };
     # zoxide - cd with smart jumps
     # boxxy - sandboxing for badly behaving linus apps
     # document reader, recolor bg's to black
