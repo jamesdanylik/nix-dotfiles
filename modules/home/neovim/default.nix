@@ -24,46 +24,82 @@
         callback = { __raw = "function() vim.lsp.buf.format() end"; };
       }
     ];
-    # keymaps = [
-    #   {
-    #     mode = "n";
-    #     key = "<leader>pt";
-    #     action = "<cmd>NvimTreeToggle<cr>";
-    #     desc = "Toggle the visibility of the file tree in the left sidebar.";
-    #   }
-    #   {
-    #     mode = "n";
-    #     key = "<leader>mm";
-    #     action = "<cmd>MinimapToggle<cr>";
-    #     desc = "Toggle the visibility of the file minimap in the right sidebar.";
-    #   }
-    # ];
-    extraConfigLua = ''
-      vim.api.nvim_set_keymap('v', 'f', '<Plug>SnipRun', {silent = true})
-      vim.api.nvim_set_keymap('n', '<leader>f', '<Plug>SnipRunOperator', {silent = true})
-      vim.api.nvim_set_keymap('n', '<leader>ff', '<Plug>SnipRun', {silent = true})
-      vim.api.nvim_set_keymap('n', '<leader>mm', "<cmd>MinimapToggle<cr>", {})
-      vim.api.nvim_set_keymap('n', '<leader>pt', '<cmd>NvimTreeToggle<cr>', {})
-      -- require('aerial').setup({})
-    '';
+    keymaps = [
+      {
+        mode = "n";
+        key = "<leader>pt";
+        action = "<cmd>NvimTreeToggle<cr>";
+        options.desc = "Toggle left sidebar file tree";
+      }
+      {
+        mode = "n";
+        key = "<leader>mm";
+        action = "<cmd>MinimapToggle<cr>";
+        options.desc = "Toggle right sidebar minimap";
+      }
+      {
+        mode = "n";
+        key = "<leader>ut";
+        action = "<cmd>UndotreeToggle<cr>";
+        options.desc = "Toggle right sidebar undotree";
+      }
+      {
+        mode = "n";
+        key = "<leader>do";
+        action = "<cmd>DiffviewOpen<cr>";
+        options.desc = "Open DiffView for current changeset";
+      }
+      {
+        mode = "n";
+        key = "<leader>df";
+        action = "<cmd>DiffviewFileHistory<cr>";
+        options.desc = "Open DiffView for current file";
+      }
+      {
+        mode = "n";
+        key = "<leader>dc";
+        action = "<cmd>DiffviewClose<cr>";
+        options.desc = "Close DiffView";
+      }
+    ];
     extraPlugins = with pkgs.vimPlugins; [
       telescope-symbols-nvim # possibly switch this to icon-picker.nvim eventually
       minimap-vim
-      #aerial-nvim
     ];
     colorschemes.tokyonight = {
       enable = true;
       style = "night";
     };
     plugins = {
-      undotree.enable = true;
+      undotree = {
+        enable = true;
+        windowLayout = 3;
+      };
       treesitter.enable = true;
       treesitter-context.enable = true;
       ts-autotag.enable = true;
+      gitsigns.enable = true;
+      fugitive.enable = true;
+      diffview.enable = true;
       copilot-lua.enable = true;
+      leap.enable = true;
+      harpoon = {
+        enable = true;
+        keymaps = {
+          addFile = "<leader>ha";
+          toggleQuickMenu = "<leader>hm";
+          navFile = {
+            "1" = "<C-1>";
+            "2" = "<C-2>";
+            "3" = "<C-3>";
+            "4" = "<C-4>";
+          };
+        };
+      };
       nvim-tree = {
         enable = true;
         updateFocusedFile.enable = true;
+        view.preserveWindowProportions = true;
       };
       rainbow-delimiters = {
         enable = true;
@@ -94,6 +130,7 @@
           "<leader>jd" = "lsp_definitions";
           "<leader>tt" = "builtin";
           "<leader>ti" = "symbols";
+          "<leader>tk" = "keymaps";
         };
       };
       comment-nvim.enable = true;
@@ -108,6 +145,8 @@
         };
         sources = [
           { name = "nvim_lsp"; }
+          { name = "nvim_lsp_signature_help"; }
+          { name = "path"; }
         ];
       };
       lsp = {
@@ -128,21 +167,20 @@
           };
           nil_ls = {
             enable = true;
-            settings = {
-              formatting = {
-                command = [ "nixpkgs-fmt" ];
+            extraSettings = {
+              nil = {
+                formatting = {
+                  command = [ "nixpkgs-fmt" ];
+                };
+                nix = {
+                  maxMemoryMB = 4096;
+                  flake = {
+                    autoArchive = true;
+                    autoEvalInputs = true;
+                  };
+                };
               };
             };
-            # extraSettings = {
-            #   nil = {
-            #     nix = {
-            #       flake = {
-            #         autoArchive = true;
-            #         autoEvalInputs = true;
-            #       };
-            #     };
-            #   };
-            # };
           };
           lua-ls = {
             enable = true;
@@ -157,7 +195,7 @@
             enable = true;
           };
         };
-      }; # End Lsp
-    }; # End Nvim Plugins
+      };
+    };
   };
 }
