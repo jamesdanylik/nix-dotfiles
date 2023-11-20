@@ -68,6 +68,11 @@
           }
         ];
       };
+      testrpi = nixpkgs.lib.nixosSystem {
+        modules = [
+          ./hosts/testrpi/configuration.nix
+        ];
+      };
     };
     darwinConfigurations = {
       "Jamess-MacBook-Pro" = nix-darwin.lib.darwinSystem {

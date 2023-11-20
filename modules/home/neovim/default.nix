@@ -62,6 +62,9 @@
         options.desc = "Close DiffView";
       }
     ];
+    extraConfigLua = ''
+      vim.opt.fillchars:append { diff = "╱" }
+    '';
     extraPlugins = with pkgs.vimPlugins; [
       telescope-symbols-nvim # possibly switch this to icon-picker.nvim eventually
       minimap-vim
@@ -83,6 +86,11 @@
       diffview.enable = true;
       copilot-lua.enable = true;
       leap.enable = true;
+      lualine = {
+        enable = true;
+        globalstatus = true;
+        extensions = [ "nvim-tree" ];
+      };
       harpoon = {
         enable = true;
         keymaps = {
@@ -167,7 +175,7 @@
           };
           nil_ls = {
             enable = true;
-            extraSettings = {
+            extraOptions.settings = {
               nil = {
                 formatting = {
                   command = [ "nixpkgs-fmt" ];

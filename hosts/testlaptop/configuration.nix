@@ -28,6 +28,7 @@
 
   boot = {
     supportedFilesystems = [ "zfs" "nfs" ];
+    binfmt.emulatedSystems = [ "aarch64-linux" ];
     loader = {
       efi = {
         canTouchEfiVariables = true;
