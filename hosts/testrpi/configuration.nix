@@ -22,6 +22,8 @@
       openssh.authorizedKeys.keys = [
         # testlaptop pubkey
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGtIKYOkswHOCV8awcE5xxvlLt1sli0qILzHLm7loV6o test"
+        # james work mpb pubkey
+        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDAtBvRrgAjslyq7gl5UvOc7SAnut41kEDf9kyqEEki0m6kLStyQ2kQG2nxxP0eV7bxIhIuraM95EuKXCJVqVr4NmPxMIqPeSV5q1vdrF2kosVBKI+mRJtSayZGWBwZbyUJ8/nC+j/ELBxpXzufxpHHtOzf4Y/q/xr1xFBgRfBR8KWHPj80qUuAbQ3nRWPrmEBM5u1VIJf1+Ak+gD8mr10JSm48bkMf8ZxA+iQqFsDIqBcY1g9VXiYQs4KJobkl9FD+5IPy1NquqlpQ86kIPt3gij1vdy9UqZo3WiyUfi0k0XTpKLhKPXJWUoQMTfqnEmuY7Rq0ucWVIzsLCGQyb7t9pAZUKf/demup1E0Ie3H+DeuhZGEog8460mG6YTvsKowH8fYNW62mjy0DEoE9caDCSCwq93uqjHabQ54E1rUetnGnH537UNAjNGA6G6UzlJQyPemEgT6t0F/UudqDRqd1DDzc7SXBJKPRdVCR8fs7JxTUwsCgOpKc/WHSwdkfZ10= jamesdanylik"
       ];
     };
     groups.testgroup = { };
