@@ -74,6 +74,30 @@
         ];
       };
     };
+    homeConfigurations = {
+      "lain" = home-manager.lib.homeManagerConfiguration {
+        pkgs = import nixpkgs { system = "x86_64-linux"; };
+        modules = [
+          ({ pkgs, ... }: {
+            home.username = "lain";
+            home.homeDirectory = "/home/lain";
+            home.stateVersion = "23.05";
+
+            imports = [
+              inputs.nixvim.homeManagerModules.nixvim
+              ./modules/home/neovim
+              ./modules/home/zsh
+              ./modules/home/eza
+              ./modules/home/direnv
+            ];
+            programs.home-manager.enable = true;
+            programs.zsh.initExtra = "export PATH=/home/lain/.nix-profile/bin:$PATH";
+
+
+          })
+        ];
+      };
+    };
     darwinConfigurations = {
       "Jamess-MacBook-Pro" = nix-darwin.lib.darwinSystem {
         modules = [

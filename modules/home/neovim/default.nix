@@ -25,24 +25,28 @@
       }
     ];
     keymaps = [
+      # Filetree
       {
         mode = "n";
         key = "<leader>pt";
         action = "<cmd>NvimTreeToggle<cr>";
         options.desc = "Toggle left sidebar file tree";
       }
+      # Minimap
       {
         mode = "n";
         key = "<leader>mm";
         action = "<cmd>MinimapToggle<cr>";
         options.desc = "Toggle right sidebar minimap";
       }
+      # Undotree
       {
         mode = "n";
         key = "<leader>ut";
         action = "<cmd>UndotreeToggle<cr>";
         options.desc = "Toggle right sidebar undotree";
       }
+      # DiffView 
       {
         mode = "n";
         key = "<leader>do";
@@ -61,6 +65,19 @@
         action = "<cmd>DiffviewClose<cr>";
         options.desc = "Close DiffView";
       }
+      # Debugger
+      {
+        mode = "n";
+        key = "<leader>rt";
+        action = ''<cmd>lua require("dapui").toggle()<cr>'';
+        options.desc = "Open debugger interface";
+      }
+      {
+        mode = "n";
+        key = "<leader>rb";
+        action = "<cmd>DapToggleBreakpoint<cr>";
+        options.desc = "Toggle debugger breakpoint";
+      }
     ];
     extraConfigLua = ''
       vim.opt.fillchars:append { diff = "╱" }
@@ -77,6 +94,17 @@
       undotree = {
         enable = true;
         windowLayout = 3;
+      };
+      dap = {
+        enable = true;
+        extensions = {
+          dap-ui.enable = true;
+          dap-virtual-text.enable = true;
+          dap-python = {
+            enable = true;
+            adapterPythonPath = "${pkgs.python3.withPackages (ps: [ ps.debugpy ] )}/bin/python";
+          };
+        };
       };
       treesitter.enable = true;
       treesitter-context.enable = true;
