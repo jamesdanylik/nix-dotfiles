@@ -23,8 +23,53 @@
         pattern = [ "*.py" "*.nix" ];
         callback = { __raw = "function() vim.lsp.buf.format() end"; };
       }
+      {
+        event = "FocusGained";
+        pattern = [ "*" ];
+        callback = { __raw = ''function() vim.cmd("call setreg('@', getreg('*'))") end''; };
+      }
+      {
+        event = "FocusLost";
+        pattern = [ "*" ];
+        callback = { __raw = ''function() vim.cmd("call setreg('*', getreg('@'))") end''; };
+      }
     ];
     keymaps = [
+      # QOL 
+      {
+        mode = "n";
+        key = "n";
+        action = "nzz";
+        options.desc = "Make regex matches center in the buffer";
+      }
+      {
+        mode = "n";
+        key = "N";
+        action = "Nzz";
+        options.desc = "Make regex matches center in the buffer";
+      }
+      {
+        mode = "n";
+        key = "*";
+        action = "*zz";
+        options.desc = "Make regex matches center in the buffer";
+      }
+      {
+        mode = "n";
+        key = "#";
+        action = "#zz";
+        options.desc = "Make regex matches center in the buffer";
+      }
+      {
+        mode = "c";
+        key = "<enter>";
+        action = "index(['/', '?'], getcmdtype()) >= 0 ? '<enter>zz' : '<enter>'";
+        options = {
+          silent = true;
+          expr = true;
+          desc = "Make regex matches center in the buffer";
+        };
+      }
       # Filetree
       {
         mode = "n";
@@ -46,7 +91,7 @@
         action = "<cmd>UndotreeToggle<cr>";
         options.desc = "Toggle right sidebar undotree";
       }
-      # DiffView 
+      # DiffView  / Git
       {
         mode = "n";
         key = "<leader>do";
@@ -64,6 +109,12 @@
         key = "<leader>dc";
         action = "<cmd>DiffviewClose<cr>";
         options.desc = "Close DiffView";
+      }
+      {
+        mode = "n";
+        key = "<leader>dg";
+        action = "<cmd>Flog<cr>";
+        options.desc = "Open git branch graph";
       }
       # Debugger
       {
@@ -85,6 +136,7 @@
     extraPlugins = with pkgs.vimPlugins; [
       telescope-symbols-nvim # possibly switch this to icon-picker.nvim eventually
       minimap-vim
+      vim-flog
     ];
     colorschemes.tokyonight = {
       enable = true;
@@ -106,6 +158,7 @@
           };
         };
       };
+      markdown-preview.enable = true;
       treesitter.enable = true;
       treesitter-context.enable = true;
       ts-autotag.enable = true;
@@ -188,6 +241,8 @@
       lsp = {
         enable = true;
         servers = {
+          # note: change 'idle parse delay' and 'code complete delay' to 0.1, enable thread in Network -> Language Server
+          gdscript.enable = true;
           pylsp = {
             enable = true;
             settings = {
@@ -201,6 +256,7 @@
               };
             };
           };
+          html.enable = true;
           nil_ls = {
             enable = true;
             extraOptions.settings = {

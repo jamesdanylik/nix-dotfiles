@@ -82,6 +82,7 @@
             home.username = "lain";
             home.homeDirectory = "/home/lain";
             home.stateVersion = "23.05";
+            home.packages = with pkgs; [ git-fame ];
 
             imports = [
               inputs.nixvim.homeManagerModules.nixvim
@@ -91,9 +92,11 @@
               ./modules/home/direnv
             ];
             programs.home-manager.enable = true;
-            programs.zsh.initExtra = "export PATH=/home/lain/.nix-profile/bin:$PATH";
-
-
+            # required for Arch Linux
+            programs.zsh.initExtra = ''
+              export PATH=/home/lain/.nix-profile/bin:$PATH
+              export EDITOR=nvim
+            '';
           })
         ];
       };
