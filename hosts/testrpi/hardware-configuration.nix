@@ -3,6 +3,7 @@
     (modulesPath + "/installer/sd-card/sd-image-aarch64.nix")
   ];
   sdImage.compressImage = false;
+  package = pkgs.mesa_drivers;
   nixpkgs.hostPlatform = "aarch64-linux";
   networking = {
     useDHCP = true;
@@ -14,9 +15,11 @@
   hardware.opengl = {
     enable = true;
     setLdLibraryPath = true;
-    package = pkgs.mesa_drivers;
   };
 
   sound.enable = true;
-  hardware.pulseaudio.enable = true;
+  hardware.pulseaudio = {
+    enable = true;
+    systemWide = true;
+  };
 }
