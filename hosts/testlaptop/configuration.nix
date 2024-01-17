@@ -103,6 +103,15 @@
     lshw
     brightnessctl
     swaynotificationcenter
+    dolphin
+    libsForQt5.kdegraphics-thumbnailers
+    libsForQt5.kio-extras
+    libsForQt5.breeze-icons
+    libsForQt5.ffmpegthumbs
+    libsForQt5.kimageformats
+    libsForQt5.dolphin-plugins
+    libsForQt5.phonon
+    libsForQt5.phonon-backend-gstreamer
   ];
 
   programs.hyprland.enable = true;
